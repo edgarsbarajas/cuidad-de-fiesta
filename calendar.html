@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <title>Calendar</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      font-family: 'Lato', sans-serif;
+    }
+
+    h1 {
+      text-align: center;
+      margin: 5px 0;
+      color: lightgray;
+    }
+
+    .calendar {
+      background-color: lightgray;
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .calendar-rows-container {
+      width: 100%;
+    }
+
+    .calendar-row {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      border-bottom: 1px solid #fff;
+    }
+
+    .day-of-the-week-container {
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      padding: 5px 0;
+    }
+
+    .day-of-the-week {
+      display: block;
+      text-align: center;
+      color: #fff;
+    }
+
+    .day {
+      padding: 3px 4px;
+      color: gray;
+      min-height: 55px;
+    }
+
+    .selected {
+      background-color: #0900ff;
+
+    }
+
+    .day:not(:last-child){
+      border-right: 1px solid #fff;
+    }
+
+    .gradient-bar {
+      width: 100%;
+      height: 5px;
+      background: rgba(255,0,0,1);
+      background: -moz-linear-gradient(left, rgba(255,0,0,1) 0%, rgba(157,29,242,1) 26%, rgba(255,111,0,1) 51%, rgba(24,85,240,1) 75%, rgba(85,255,0,1) 100%);
+      background: -webkit-gradient(left top, right top, color-stop(0%, rgba(255,0,0,1)), color-stop(26%, rgba(157,29,242,1)), color-stop(51%, rgba(255,111,0,1)), color-stop(75%, rgba(24,85,240,1)), color-stop(100%, rgba(85,255,0,1)));
+      background: -webkit-linear-gradient(left, rgba(255,0,0,1) 0%, rgba(157,29,242,1) 26%, rgba(255,111,0,1) 51%, rgba(24,85,240,1) 75%, rgba(85,255,0,1) 100%);
+      background: -o-linear-gradient(left, rgba(255,0,0,1) 0%, rgba(157,29,242,1) 26%, rgba(255,111,0,1) 51%, rgba(24,85,240,1) 75%, rgba(85,255,0,1) 100%);
+      background: -ms-linear-gradient(left, rgba(255,0,0,1) 0%, rgba(157,29,242,1) 26%, rgba(255,111,0,1) 51%, rgba(24,85,240,1) 75%, rgba(85,255,0,1) 100%);
+      background: linear-gradient(to right, rgba(255,0,0,1) 0%, rgba(157,29,242,1) 26%, rgba(255,111,0,1) 51%, rgba(24,85,240,1) 75%, rgba(85,255,0,1) 100%);
+      filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff0000', endColorstr='#55ff00', GradientType=1 );
+    }
+
+    .mobile-buttons-row {
+      width: 100%;
+      background: #fff;
+      display: flex;
+      justify-content: space-around;
+    }
+
+    .mobile-button {
+      width: 100px;
+      margin: 5px 0;
+    }
+
+    .button {
+      text-transform: uppercase;
+      text-align: center;
+      padding: 5px 0;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .active {
+      position: relative;
+    }
+
+    .active:after {
+      position: absolute;
+      content: "●";
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .desktop-buttons {
+      display: none;
+    }
+
+    .homepage-button {
+      background: rgba(255,164,66,1);
+      background: -moz-linear-gradient(left, rgba(255,164,66,1) 0%, rgba(255,21,0,1) 100%);
+      background: -webkit-gradient(left top, right top, color-stop(0%, rgba(255,164,66,1)), color-stop(100%, rgba(255,21,0,1)));
+      background: -webkit-linear-gradient(left, rgba(255,164,66,1) 0%, rgba(255,21,0,1) 100%);
+      background: -o-linear-gradient(left, rgba(255,164,66,1) 0%, rgba(255,21,0,1) 100%);
+      background: -ms-linear-gradient(left, rgba(255,164,66,1) 0%, rgba(255,21,0,1) 100%);
+      background: linear-gradient(to right, rgba(255,164,66,1) 0%, rgba(255,21,0,1) 100%);
+      filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffa442', endColorstr='#ff1500', GradientType=1 );
+    }
+
+    .swo-button {
+      background: rgba(9,0,255,1);
+      background: -moz-linear-gradient(left, rgba(9,0,255,1) 0%, rgba(96,38,163,1) 66%, rgba(96,38,163,1) 97%);
+      background: -webkit-gradient(left top, right top, color-stop(0%, rgba(9,0,255,1)), color-stop(66%, rgba(96,38,163,1)), color-stop(97%, rgba(96,38,163,1)));
+      background: -webkit-linear-gradient(left, rgba(9,0,255,1) 0%, rgba(96,38,163,1) 66%, rgba(96,38,163,1) 97%);
+      background: -o-linear-gradient(left, rgba(9,0,255,1) 0%, rgba(96,38,163,1) 66%, rgba(96,38,163,1) 97%);
+      background: -ms-linear-gradient(left, rgba(9,0,255,1) 0%, rgba(96,38,163,1) 66%, rgba(96,38,163,1) 97%);
+      background: linear-gradient(to right, rgba(9,0,255,1) 0%, rgba(96,38,163,1) 66%, rgba(96,38,163,1) 97%);
+      filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#0900ff', endColorstr='#6026a3', GradientType=1 );
+    }
+
+    .notes-button {
+      background: rgba(0,171,46,1);
+      background: -moz-linear-gradient(left, rgba(0,171,46,1) 0%, rgba(8,14,238,1) 92%, rgba(9,0,255,1) 100%);
+      background: -webkit-gradient(left top, right top, color-stop(0%, rgba(0,171,46,1)), color-stop(92%, rgba(8,14,238,1)), color-stop(100%, rgba(9,0,255,1)));
+      background: -webkit-linear-gradient(left, rgba(0,171,46,1) 0%, rgba(8,14,238,1) 92%, rgba(9,0,255,1) 100%);
+      background: -o-linear-gradient(left, rgba(0,171,46,1) 0%, rgba(8,14,238,1) 92%, rgba(9,0,255,1) 100%);
+      background: -ms-linear-gradient(left, rgba(0,171,46,1) 0%, rgba(8,14,238,1) 92%, rgba(9,0,255,1) 100%);
+      background: linear-gradient(to right, rgba(0,171,46,1) 0%, rgba(8,14,238,1) 92%, rgba(9,0,255,1) 100%);
+      filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ab2e', endColorstr='#0900ff', GradientType=1 );
+    }
+
+    @media(min-width: 760px){
+      .calendar-row {
+        min-height: 125px;
+      }
+      .active:after, .mobile-buttons-row {
+        display: none;
+      }
+
+      .desktop-buttons {
+        display: block;
+        width: 100%;
+        height: 85%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        letter-spacing: 1px;
+        box-sizing: border-box;
+      }
+
+      .desktop-button {
+        width: 100%;
+      }
+    }
+
+    .screenshot-wrapper {
+      position: absolute;
+      z-index: 1000;
+      height: 100vh;
+      width: 100vw;
+      left: 50%;
+      top: 50%;
+      overflow:scroll;
+      transform: translate(-50%, -50%);
+      background-color: rgba(0, 0, 0, 0.7);
+      text-align: center;
+    }
+
+    .screenshot {
+      padding: 10px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .exit-modal {
+      text-align: right;
+      font-size: 24px;
+      padding-right: 15px;
+      color: #fff;
+      cursor: pointer;
+    }
+  </style>
+  <h1 class="month-year"></h1>
+  <div class="calendar">
+    <div class="day-of-the-week-container">
+        <div><span class="day-of-the-week">S</span></div>
+        <div><span class="day-of-the-week">M</span></div>
+        <div><span class="day-of-the-week">T</span></div>
+        <div><span class="day-of-the-week">W</span></div>
+        <div><span class="day-of-the-week">T</span></div>
+        <div><span class="day-of-the-week">F</span></div>
+        <div><span class="day-of-the-week">S</span></div>
+    </div>
+    <div class="gradient-bar"></div>
+    <div class="calendar-rows-container">
+      <!-- <div class="calendar-row row1">
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+      </div>
+      <div class="calendar-row row2">
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+      </div>
+      <div class="calendar-row row3">
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+      </div>
+      <div class="calendar-row row4">
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+      </div>
+      <div class="calendar-row row5">
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+      </div> -->
+    </div>
+  </div>
+  <div class="screenshot-wrapper hidden">
+    <div class="exit-modal">
+      &#10006;
+    </div>
+    <img src="https://stillio.s3.amazonaws.com/screenshots/1f/ZBLd4jFk6K9sVcDd4J7P/89de6b9b3650b6054a8bcd25343920bdf20a1e62_1_small.png" class="screenshot"/>
+  </div>
+  <script>
+    var homepages = [
+      "homepage-180502",
+      "homepage-180503",
+      "homepage-180504",
+      "homepage-180506",
+      "homepage-180508",
+      "homepage-180510",
+      "homepage-180511",
+      "homepage-180514",
+      "homepage-180517",
+      "homepage-180519",
+      "homepage-180520",
+      "homepage-180521",
+      "homepage-180522",
+      "homepage-180526",
+      "homepage-180529"
+    ]
+    const homepageDays = homepages.map(function(homepage){
+      return parseInt(homepage.substr(13,2))
+    })
+    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+    const daysInEachMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+    const url = window.location.search
+    const rowsContainer = $(".calendar-rows-container")
+    
+    if(url.search("year") < url.search("month")){
+      var month = parseInt(url.split("month=")[1])
+      var year = url.split("year=")[1].substr(0, 4)
+    }else {
+      var year = url.split("year=")[1]
+      var month = parseInt(url.split("month=")[1][0])
+    }
+
+    //add day boxes
+    const startDay = new Date(months[month-1] + " " + year).getDay()
+    const rowsNeeded = Math.ceil((startDay + daysInEachMonth[month-1]) / 7)
+
+    for(var i = 0; i < rowsNeeded; i++){
+      rowsContainer.append(`
+      <div class="calendar-row row${i+1}">
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+      </div>
+      `)
+    }
+    
+    // Add Month and Year as h1
+    $('.month-year').html(months[month-1] + " " + year);
+
+    // get first day of the month to fill the rest of the calendar
+    const dayElements = $(".day")
+    for(var i = 0; i < daysInEachMonth[month-1]; i++){
+      // add specific class to each day instance... day1, day2, etc.
+      $(dayElements[startDay+i]).addClass(`day${i+1}`)
+
+      // add a span containing the actual number displayed on the calendar
+      $(dayElements[startDay+i]).html(`<span class='day-number'>${i+1}</span>`)
+
+      // if the day is a homepage day...
+      if(homepageDays.indexOf(i+1) > -1){
+        // add active class, which adds the dot to mobile
+        $(`.day${i+1}`).addClass("active")
+
+        // add desktop buttons to specific day
+        // $(`.day${i+1}`).append(`
+        //   <div class="desktop-buttons">
+        //     <div class="desktop-button homepage-button button">
+        //       <span>homepage</span>
+        //     </div>
+        //     <div class="desktop-button swo-button button">
+        //         <span>swo</span>
+        //     </div>
+        //     <div class="desktop-button notes-button button">
+        //         <span>Notes</span>
+        //     </div>
+        //   </div>
+        // `)
+      }
+    }
+
+    // append a row that will display homepage, swo, and notes buttons on mobile
+    $(".active").on("click", function(){
+      if(window.innerWidth < 760){
+        const row = $(this).closest(".calendar-row")
+        // if(row.)
+        $(this).addClass("selected")
+        $(this).closest(".calendar-row").after(`
+          <div class='mobile-buttons-row'>
+            <div class="homepage-button mobile-button button">
+              <span>homepage</span>
+            </div>
+            <div class="swo-button mobile-button button">
+                <span>swo</span>
+            </div>
+            <div class="notes-button mobile-button button">
+                <span>Notes</span>
+            </div>
+          </div>
+        `)
+      }
+    })
+    
+    // get homepage screenshot to appear
+    $(".calendar").on("click", ".homepage-button", function(){
+      $(".screenshot-wrapper").removeClass("hidden")
+    })
+
+    // make the modal disapear when hitting the exit modal button
+    $(".exit-modal").on("click", function(){
+      // hide all screenshot, swo, and notes modals
+      $(".screenshot-wrapper").addClass("hidden")
+    })
+
+    // $.get("https://app.stillio.com/api/screenshots?api_token=30cQf8auJHQGmgMO9aC0YuDTFjmR1mudP0KNPPAMJpHvdXIGcGgNOTSNx4CI&url_id=e28f7808-1840-46e0-a4b9-620127461591&limit=10", function(response){
+    //   response = JSON.parse(response)
+
+    //   var pic = response.filter(function(screenshot){
+    //     return new Date(response.screenshots[0].created).getDate() === 29
+    //   })
+
+    // })
+
+      
+    
+  </script>
+</body>
+</html>
